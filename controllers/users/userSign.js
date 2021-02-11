@@ -1,26 +1,38 @@
 const { user } = require('../../models');
+const { userinfo } = require('./userInfo');
 
 module.exports = {
   sign: async (req, res) => {
+   
+     console.log(req.body)
     const {
       username,
       password
     } = req.body;
 
     // 사용자 조회 
+    console.log('사용자조회')
     const userInfo = await user.findOne({
       where: { username: username, password: password }
     })
-    .catch(err => res.status(400).send("입력값이 잘못되었습니다."));
+    
+    // .catch(err => res.status(400).json("입력값이 잘못되었습니다."));
 
     if (!userInfo) {
       // 회원이 아니라면 
       res.status(404).send('존재하지 않는 사용자 입니다.')
     } else {
       // 회원이라면 
-       req.session.identifier = userInfo.dataValues.username; // 세션에 
-      //  console.log("id1   " + req.session.id)
-      res.status(200).send('로그인 성공')
+      // console.log(userInfo)
+     req.session.doitnow = userInfo.dataValues.username 
+     res.status(200).send("ok");
+ 
+ 
+ 
+
+      //res.send(response);
+       //  console.log("id1   " + req.session.id)
+      //  res.status(200).json("ok")
     }
   }
 }
