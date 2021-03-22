@@ -22,6 +22,7 @@ module.exports = {
           ],
         })
         .catch((err) => res.status(400).send(err));
+        console.log(result)
       if (info.length !== 0) {
         let result = Object.assign(
           { nickname: info[0].dataValues.nickname },
@@ -72,22 +73,24 @@ module.exports = {
     }
   },
   getMessage: async (req, res) => {
-    if (!req.cookies.id) {
-      res.status(400).send('로그인 후 이용해주세요');
-    } else {
+  
+ 
+     
       // (댓글) placeId, nickname, message => smokePlaces + users + messages => n : n
       const { placeId } = req.body;
       const result = await user
-        .findAll({
-          attributes: ['nickname'],
-          include: {
-            model: message,
-            attributes: ['message'],
-            where: { smokePlaceId: placeId },
-          },
-        })
-        .catch((err) => res.sendStatus(500));
-      console.log(result);
+      .findAll({
+        attributes: ['nickname'],
+        include: {
+          model: message,
+          attributes: ['message', 'createdAt'],
+          where: { smokePlaceId: placeId }
+        },
+      
+      })
+      .catch((err) => res.sendStatus(500));
+      // console.log(result)
+      
       if (result.length !== 0) {
         let data = [];
         for (let k = 0; k < result.length; k++) {
@@ -95,14 +98,17 @@ module.exports = {
             data.push({
               nickname: result[k].dataValues.nickname,
               message: result[k].messages[i].dataValues.message,
+              createdAt: result[k].messages[i].dataValues.createdAt
             });
           }
         }
-        res.status(200).send(data);
+        // console.log(data)
+        console.log(data.sort((a, b) => a.createdAt - b.createdAt))
+        return res.status(200).send(data);
       } else {
-        res.status(200).send('메세지가 없습니다.');
+        return res.status(200).send('메세지가 없습니다.');
       }
-    }
+    
   },
   getAllData: async (req, res) => {
     const data = await smokePlace.findAll().catch((err) => res.sendStatus(400));

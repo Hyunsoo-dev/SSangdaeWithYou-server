@@ -19,7 +19,7 @@ module.exports = {
       //  req.session.identifier = userInfo.dataValues.username; // 세션에
       //  console.log("id1   " + req.session.id)
       res.cookie('id', userInfo.dataValues.username, {
-        domain: 'ssangdae.gq',
+        domain: 'localhost',
         // domain: 'ssangdae.gq',
         path: '/',
         sameSite: 'none',
